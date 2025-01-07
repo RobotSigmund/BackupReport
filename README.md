@@ -49,11 +49,11 @@ IOs should have clearly defined labels and categories. IOs with missing labels a
 
 * IO Access level
 
-According to ISO10218 IOs should which can generate dangerous movements within a robotcell should be prevented from being remotely operated. This means access level should be defined with remote access prevented. "-Access All" IOs will generate warnings.
+According to *ISO10218-2 5.6.5 Remote access for manual intervention* IOs which can generate dangerous movements within a robotcell should be prevented from being remotely operated. This means access level should be defined with remote access prevented. "-Access All" IOs will generate warnings.
 
 * Programdata prefix
 
-All programdata should be prefixed according to ABB documentation. Missing or wrong prefix will generate errors.
+All programdata should be prefixed according to ABB documentation, *Reference manual Naming convention 3HNA013447-001 en Rev.03*. Missing or wrong prefix will generate errors.
 
 * Task shared programdata
 
