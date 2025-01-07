@@ -5,7 +5,7 @@ Generate a report showing common pitfalls and highlights bad practices.
 
 # Example report
 
-[RepoScore.md]()
+[RepoScore.md](https://github.com/RobotSigmund/BackupReport/blob/d60a30e0c6a41e87f91fb9ed6fbccbc332c85455/RepoScore.md)
 
 
 # Supported checks
