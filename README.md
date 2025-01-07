@@ -8,6 +8,27 @@ Generate a report showing common pitfalls and highlights bad practices.
 [RepoScore.md](https://github.com/RobotSigmund/BackupReport/blob/d60a30e0c6a41e87f91fb9ed6fbccbc332c85455/RepoScore.md)
 
 
+# Download and install Perl for windows
+
+[strawberryperl.com](https://strawberryperl.com/)
+
+
+# How
+
+Copy the perlscript *BackupReport.pl* into the backup folder.
+
+```
+|-+ Backup_00-00000-YYYY-DD-MM  
+  |-+ BACKINFO  
+    + HOME  
+    + RAPID  
+    + SYSPAR  
+    + BackupReport.pl  
+```
+
+Doubleclick the *BackupReport.pl*. It will generate a report file, *RepoScore.md*. See link above for example report.
+
+
 # Supported checks
 
 * Routine length
