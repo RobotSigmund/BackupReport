@@ -667,12 +667,14 @@ sub ListTaskFolders {
 	my(@res) = ();
 	
 	# open folder and loop through files
-	opendir(my $DIR, $foldername);
+	opendir(my $DIR, $foldername) or die('Cant open RAPID folder. Are you sure you put the script inside the backupfolder?');
 	foreach my $de (readdir($DIR)) {
 		# Add to results and continue
 		push(@res, $1 . ';' . $foldername . '/' . $de) if ((-d $foldername . '/' . $de) && ($de =~ /(^TASK\d+)/));
 	}
 	closedir($DIR);
+	
+	die('No task folders found. Early exit...') if ($#res <= 0);
 	
 	# Return results
 	return @res;
