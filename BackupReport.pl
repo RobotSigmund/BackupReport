@@ -674,7 +674,7 @@ sub ListTaskFolders {
 	}
 	closedir($DIR);
 	
-	die('No task folders found. Early exit...') if ($#res <= 0);
+	die('No task folders found. Early exit...') if ($#res < 0);
 	
 	# Return results
 	return @res;
