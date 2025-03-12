@@ -245,43 +245,67 @@ sub ReadSyspar {
 
 	open(my $FILE,'<'.$filepath);
 	while (my $line = <$FILE>) {
+		# Trim junk
+		$line =~ s/^[\s\t]+//;
+		$line =~ s/[\s\t]+$//;
+		$line =~ s/[\s\t]+/ /g;
+		
+		# Add fileline counter
 		$fileline++;
 		
-		# Register signal section of EIO.cfg
+		# Register signal section of EIO.cfg. $section can be for example 'EIO_SIGNAL'
 		if ($line =~ /^$section:/) {
 			$section_signal = 1;
 			next;
 		}
 		
-		# No more signals
-		last if (($section_signal == 1) && ($line =~ /^#/));
-		
 		# Next if we are in wrong section
 		next if ($section_signal == 0);
+
+		# No more signals
+		last if (($section_signal) && ($line =~ /^#/));		
 		
-		if ($line =~ /\\$/) {
-			# Multiline add and read next
-			chomp($line);
+		while ($line =~ /\\$/) {
+			# Multiline
+
+			# Remove backslash
 			chop($line);
-			$multiline .= $line;
-			next;
+
+			# Append the next line
+			$line .= <$FILE>;
+
+			# Trim junk
+			$line =~ s/^[\s\t]+//;
+			$line =~ s/[\s\t]+$//;
+			$line =~ s/[\s\t]+/ /g;
+
+			# Add fileline counter
+			$fileline++;
 		}
 		
-		$line = $multiline . $line;
-		$multiline = '';
-		
-		$line =~ s/^[\s\t]+//;
-		$line =~ s/[\s\t]+$//;
-		$line =~ s/[\s\t]+/ /g;
-		$line =~ s/-([\w\d_]+)\s+"([\w\d_\-,\s]+)"\s?/$1=$2;/gi;
-		$line =~ s/-([\w\d_]+)\s+/$1=x;/gi;
-		
+		# Empty line, skip to next
 		next unless ($line);
-		
+
+		# Parse line, try to change data from:
+		#   -Name "Value" -Name "Value"
+		# to:
+		#   Name=Value;Name=Value;
+		# NOTE! If labels are not registered, check the contents of the label. The regex below
+		#   may need to be expanded to include "off-spec" characters.
+		$line =~ s/-([\w\d_]+)\s+"([\w\d_\-,\s\.]+)"\s?/$1=$2;/gi;
+		# Try to change data from:
+		#   -Name -Name
+		# to:
+		#   Name=x;Name=x;
+		$line =~ s/-([\w\d_]+)\s+/$1=x;/gi;
+				
+		# Push data into array. $line should end with a semicolon here
 		push(@res, $line . 'fileline=' . $fileline);
 	}
 	close($FILE);
 	
+	# Array should look like this
+	#   ("Name=Val;Name=Val;", "Name=Val;Name=Val;Name=Val", ...)
 	return @res;
 }
 
