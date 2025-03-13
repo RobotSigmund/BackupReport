@@ -26,7 +26,7 @@ Copy the perlscript *BackupReport.pl* into the backup folder.
     + BackupReport.pl  
 ```
 
-Doubleclick the *BackupReport.pl*. It will generate a report file, *RepoScore.md*. See link above for example report.
+Doubleclick the *BackupReport.pl*. It will generate a report file, *BackupReport.md*. See link above for example report.
 
 
 # Supported checks
