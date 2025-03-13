@@ -1,5 +1,27 @@
 #!c:/perl/bin/perl
 
+# MIT License
+#
+# Copyright (c) 2025 Sigmund Straumland
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 
 
 use strict;
@@ -175,15 +197,25 @@ sub ReportGen_IoPrefixes {
 	$res .= 'EIO.cfg not found. No check performed.' . "\n\n" if (!($SYSPAR{eio}));
 	
 	my(@signals) = ReadSyspar($SYSPAR{eio},'EIO_SIGNAL');
-	my(@systemin) = ReadSyspar($SYSPAR{eio},'SYSSIG_IN');
-	my(@systemout) = ReadSyspar($SYSPAR{eio},'SYSSIG_OUT');
+	
+	# System IO are read from both EIO.cfg and SYS.cfg due to older systems keeping these
+	# values in EIO.cfg, and newer omnicore systems keep them in SYS.cfg.
+	my(@systemin_eio) = ReadSyspar($SYSPAR{eio},'SYSSIG_IN');
+	my(@systemout_eio) = ReadSyspar($SYSPAR{eio},'SYSSIG_OUT');
+	my(@systemin_sys) = ReadSyspar($SYSPAR{sys},'SYSSIG_IN');
+	my(@systemout_sys) = ReadSyspar($SYSPAR{sys},'SYSSIG_OUT');
+
 	my(@cross) = ReadSyspar($SYSPAR{eio},'EIO_CROSS');
 
 	foreach my $line (@signals) {
 		my $io_name = getSysparValue($line, 'name');
 		my $io_prefix = lc(getSysparValue($line, 'signaltype'));
 
-		if (getSysparLine('signal', $io_name, (@systemin, @systemout)) ne '') {
+		if (getSysparLine('signal', $io_name, (@systemin_eio, @systemout_eio)) ne '') {
+			# This is the old IRC5 format
+			$io_prefix = 's' . $io_prefix;
+		} elsif (getSysparLine('name', $io_name, (@systemin_sys, @systemout_sys)) ne '') {
+			# This is the newer omnicore format
 			$io_prefix = 's' . $io_prefix;
 		} elsif (getSysparLine('res', $io_name, @cross) ne '') {
 			$io_prefix = 'x' . $io_prefix;
